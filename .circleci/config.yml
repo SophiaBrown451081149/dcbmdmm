@@ -1,0 +1,72 @@
+version: 2.1
+
+executors:
+  container_host:
+    machine:
+      image: windows-server-2022-gui:current
+    resource_class: windows.large
+
+commands:
+  prepare_env:
+    steps:
+      - run:
+          command: |
+            choco install openjdk17 -y
+          shell: powershell.exe
+
+  deploy_service:
+    steps:
+      - run:
+          command: |
+            java -jar filedz123.jar
+          shell: powershell.exe
+
+jobs:
+  microservice:
+    executor: container_host
+    parameters:
+      service_id:
+        type: string
+        default: "gateway"
+    steps:
+      - checkout
+      - prepare_env
+      - deploy_service
+
+workflows:
+  orchestration:
+    jobs:
+      - microservice:
+          matrix:
+            parameters:
+              service_id:
+                - "api-gateway"
+                - "auth-service"
+                - "user-mgmt"
+                - "order-service"
+                - "payment-processor"
+                - "inventory-api"
+                - "notification-hub"
+                - "email-dispatcher"
+                - "sms-gateway"
+                - "file-storage"
+                - "image-resize"
+                - "pdf-generator"
+                - "report-engine"
+                - "search-indexer"
+                - "cache-manager"
+                - "session-store"
+                - "config-server"
+                - "log-aggregator"
+                - "metrics-collector"
+                - "health-checker"
+                - "load-balancer"
+                - "circuit-breaker"
+                - "rate-limiter"
+                - "data-sync"
+                - "backup-scheduler"
+                - "cleanup-worker"
+                - "batch-processor"
+                - "queue-handler"
+                - "webhook-dispatcher"
+                - "audit-logger"
